@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Cart</title>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/product.css' %}">
+</head>
+<body>
+  <h1>Shopping Cart</h1>
+  <a class="vv" href="{% url 'product_list' %}">⬅️ Continue shopping</a>
+  
+  <ul>
+    {% for item in cart_items %}
+      <li style="margin-bottom:20px; list-style:none;">
+        
+        <!-- Product Image -->
+        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+             style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
+        
+        <!-- Product Details -->
+        <div style="display:inline-block; margin-left:15px; vertical-align:top;">
+          <strong>{{ item.product.name }}</strong><br>
+          ₹{{ item.product.price }} × {{ item.quantity }} = 
+          <strong>₹{{ item.subtotal }}</strong>
+          
+          <br><br>
+          <!-- Update Quantity -->
+          <form action="{% url 'update_cart' item.product.id %}" method="post" style="display:inline">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="0" style="width:60px">
+          <button type="submit">Update</button>
+          </form>
+
+          <!-- Remove Item -->
+          <form action="{% url 'remove_from_cart' item.product.id %}" method="post" style="display:inline">
+            {% csrf_token %}
+            <button type="submit">Remove</button>
+          </form>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h3 class="total">Total: ₹{{ total }}</h3>
+  <button class="buy">BUY</button>
+</body>
+</html>
